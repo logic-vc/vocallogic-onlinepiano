@@ -60,13 +60,11 @@ export const SheetMusic: React.FC<SheetMusicProps> = ({ activeKeys }) => {
     lines.push(<line key="end-bar" x1={width - 40} x2={width - 40} y1={topY} y2={bottomY} stroke="#374151" strokeWidth="3" />);
     
     // Clefs
-    // Adjusted positions manually to align with standard G-line and F-line
-    // Treble: Moved up 1 space (16px) from -12 to -28
+    // Adjusted positions: Treble up 1 space (-28), Bass down 2 spaces (+84)
     lines.push(
       <text key="treble-clef" x="45" y={centerY - 28} fontSize="72" fontFamily="serif" fill="#1f2937">𝄞</text>
     );
-    // Bass: Moved down 2 spaces (32px) from +52 to +84
-     lines.push(
+    lines.push(
       <text key="bass-clef" x="45" y={centerY + 84} fontSize="60" fontFamily="serif" fill="#1f2937">𝄢</text>
     );
 
@@ -119,13 +117,15 @@ export const SheetMusic: React.FC<SheetMusicProps> = ({ activeKeys }) => {
   };
 
   return (
-    <div className="w-full flex justify-center bg-white rounded-xl shadow-sm border border-gray-200 p-2 mb-8 overflow-hidden">
-      <div className="w-full max-w-3xl aspect-[2.5/1] sm:aspect-[3/1]">
-        <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} preserveAspectRatio="xMidYMid meet">
+    <div className="w-full h-full flex justify-center items-center overflow-hidden">
+        <svg 
+          className="max-h-full w-auto" 
+          viewBox={`0 0 ${width} ${height}`} 
+          preserveAspectRatio="xMidYMid meet"
+        >
           {renderStaves()}
           {renderActiveNotes()}
         </svg>
-      </div>
     </div>
   );
 };

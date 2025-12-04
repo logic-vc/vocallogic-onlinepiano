@@ -22,7 +22,7 @@ export const Piano: React.FC<PianoProps> = ({ showLabels, activeKeys, setActiveK
 
     // Clear any pending removal for this key
     if (timeoutsRef.current[note.id]) {
-      clearTimeout(timeoutsRef.current[note.id]);
+      window.clearTimeout(timeoutsRef.current[note.id]);
     }
 
     // Visual feedback: Add key
@@ -33,8 +33,7 @@ export const Piano: React.FC<PianoProps> = ({ showLabels, activeKeys, setActiveK
     });
 
     // Schedule removal
-    // Sound decay is handled in engine, this is for the visual key/note press
-    const timeoutId = setTimeout(() => {
+    const timeoutId = window.setTimeout(() => {
       setActiveKeys(prev => {
         const newSet = new Set(prev);
         newSet.delete(note.id);
@@ -93,12 +92,12 @@ export const Piano: React.FC<PianoProps> = ({ showLabels, activeKeys, setActiveK
             onTouchStart={(e) => { e.preventDefault(); playNote(note); }}
           >
             {showLabels && (
-              <span className="text-gray-500 font-semibold text-sm sm:text-base pointer-events-none">
+              <span className="text-gray-500 font-semibold text-sm sm:text-base pointer-events-none mb-1 sm:mb-2">
                 {note.label}
               </span>
             )}
             {/* Keyboard shortcut hint */}
-            <span className="text-[10px] text-gray-300 absolute bottom-1 hidden md:block">
+            <span className="text-[10px] text-gray-300 absolute bottom-1 hidden lg:block">
               {note.keyboardShortcut.toUpperCase()}
             </span>
           </button>
@@ -133,7 +132,7 @@ export const Piano: React.FC<PianoProps> = ({ showLabels, activeKeys, setActiveK
                   )}
                 </div>
               )}
-               <span className="text-[9px] text-gray-600 absolute top-2 hidden md:block">
+               <span className="text-[9px] text-gray-600 absolute top-2 hidden lg:block">
                  {nextNote.keyboardShortcut.toUpperCase()}
                </span>
             </button>
@@ -146,11 +145,22 @@ export const Piano: React.FC<PianoProps> = ({ showLabels, activeKeys, setActiveK
   };
 
   return (
-    <div className="w-full h-64 sm:h-80 md:h-96 bg-gray-100 p-2 sm:p-4 rounded-xl shadow-inner overflow-hidden relative">
-        {/* The Piano Bed */}
-        <div className="w-full h-full bg-white relative flex rounded shadow-lg overflow-hidden">
-            <div className="w-full h-2 bg-gray-800 absolute top-0 left-0 z-20"></div> {/* Felt strip */}
-            {renderKeys()}
+    <div className="w-full h-full bg-gray-100 p-2 sm:p-4 rounded-xl shadow-inner relative overflow-hidden flex flex-col">
+        {/* Scrollable Container for keys */}
+        <div className="flex-1 w-full overflow-x-auto overflow-y-hidden custom-scrollbar">
+            {/* 
+                Piano Bed:
+                min-w-[500px] ensures keys are playable on mobile (horizontal scroll) but 20% smaller than before.
+                landscape:min-w-0 ensures it fits to screen in landscape mode without forced scrolling.
+            */}
+            <div className="h-full min-w-[500px] landscape:min-w-0 w-full bg-white relative flex rounded shadow-lg overflow-hidden">
+                <div className="w-full h-2 bg-gray-800 absolute top-0 left-0 z-20"></div> {/* Felt strip */}
+                {renderKeys()}
+            </div>
+        </div>
+        {/* Mobile scroll hint */}
+        <div className="text-center text-xs text-gray-400 mt-1 sm:hidden landscape:hidden">
+            ↔ 좌우로 스크롤하여 연주하세요
         </div>
     </div>
   );
